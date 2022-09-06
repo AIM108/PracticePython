@@ -1,6 +1,7 @@
 
 ##Question Two
 
+from math import e
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -12,12 +13,16 @@ B=40;
 m=-0.276;
 
 
-tempValue=A+B**(m*np.float_(t));
+tempValue=A+(B*(e**(m*np.float_(t))));
 print(tempValue);
 
 
 plt.xlabel("Time");
 plt.ylabel("Temperature");
 plt.title("Time x Temperature using equation A+B^(m*t)");
-plt.plot(tempValue,T);
+##Plot using the equation
+plt.plot(t,tempValue);
+
+##Plot with given values
+plt.plot(t,T);
 plt.show();
