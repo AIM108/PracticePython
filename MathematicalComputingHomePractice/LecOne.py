@@ -1,5 +1,7 @@
 import numpy as np
 
+
+
 """"
 ##Python works in default with list
 A=[1,2,3,4];
@@ -85,5 +87,28 @@ c=A[J[0],J[1]];
 C=np.reshape(c,(len(c),1));
 print(C);
 """
+
+
+A=np.array([[1,2,2,3],[43.,36,0,9]]);
+print(A);
+
+I= np.argwhere(A==1);
+A=np.delete(A,I[0]);
+A=np.append(A,9.0);
+A=np.reshape(A,(2,4));
+print(A);
+
+C=np.array([[1.,2,3],[6,7,8]]);
+B=np.array([[4.,5],[9,10]]);
+
+D=np.array([[11.,12,13,14,15]]);
+
+C=np.concatenate((C,B), axis=1); ##Columns
+C=np.concatenate((C,D), axis=0); ##rows
+
+print(C);
+
+
+
 
 
