@@ -14,19 +14,22 @@ def gcd(a,p):
     (oldt,t) = (0,1)
     
     while r != 0:
+        print("oldr: ",oldr," r: ",r)
         q= n.floor(oldr//r)
+        print(q)
         (oldr,r) = (r,oldr-q*r)
         (olds,s) = (s,olds - q*s)
-        (oldt, t) = (t,oldt-1*t)
+        (oldt, t) = (t,oldt-q*t)
     if olds <0:
         olds =olds+p
-    return oldr,olds
+    return oldr,olds,oldt
 
 def testgcd():
-    oldr,olds =gcd(5,10)
+    oldr,olds,oldt =gcd(222,1023)
     print("GCD: ")
     print(oldr)
     print(olds)
+    print(oldt)
 
     
 def algoOne(a,p):
