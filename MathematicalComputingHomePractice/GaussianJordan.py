@@ -1,5 +1,25 @@
 import numpy as np
 
+
+
+
+##Gaussian Elimination Algorithm
+def gea(matrixA):
+    (m,n)=np.shape(matrixA)
+    p=0
+    for i in range(0,m-1):
+        j =p+1
+        flag=0
+        while j<=n and flag ==0:
+            ##Implmentaion migth not be right
+            imax=(np.argmax(matrixA[i:,j]))*abs(matrixA[(np.argmax(matrixA[i:,j])),j])
+            print(np.argmax(matrixA[i:,j]))
+            print(imax)
+            ##Check code above
+            flag=1
+
+            
+
 ##Gauss-Jordan Algorithm
 def gaussJordanReduction(matrixA):
     (m,n)=np.shape(matrixA)
@@ -16,16 +36,21 @@ def gaussJordanReduction(matrixA):
         if (flag ==1):
             q=i-1
             for k in range(q,1,-1):
-                rowK =np.reshape(matrixA[k,:],(1,len(matrixA[1,:])))
+                rowK =matrixA[k,:]
                 print(rowK)
-                rowI =np.reshape(matrixA[i,:],(1,len(matrixA[1,:])))
+                rowI =matrixA[i,:]
                 print(rowI)
                 matrixA[k,:]=((-matrixA[k,j])*rowI)+rowK
                 print(k)
 
 def gJTest():
-    A=np.matrix([[1,2,-1,4],[0,1,0,3],[0,0,1,2]])
-    gaussJordanReduction(A)
+    A=np.matrix([[1,1,-1],[2,-1,1],[-1,2,2]])
+    ##gaussJordanReduction(A)
+    gea(A)
+ 
+
+
+
 def main():
     gJTest()
 
