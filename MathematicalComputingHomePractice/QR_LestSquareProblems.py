@@ -91,25 +91,26 @@ def QRImprovedDecomposition(A):
     R= np.zeros((n,n))
     Q =np.zeros((m,n))
     rank = 0
-
+    tol=1e-7
     for j in range(0,n):
         vector_proj = np.zeros((m,1))
         for i in range(0,rank):
             ##Vector projection plus the row i in q and r at i,j
-            vector_proj =vector_proj+R[i,j]*Q[:,i:i+1]
-            ##The diffrence in our actual A row j and its projection
-            residual =A[:,j:j+1] - vector_proj
-            norm_residual = np.linalg.norm(residual)
-            
-            
-            ## we will make e the tolerance a very small number
-            e=0.0005
-            if(norm_residual > e):
-                R[rank-1,j] =norm_residual
-                Q[:,rank-1:rank] = (residual/norm_residual)
+            vector_proj =vector_proj+(R[i,j]*Q[:,i:i+1])
+        ##The diffrence in our actual A row j and its projection
+        residual =A[:,j:j+1] - vector_proj
+        norm_residual = np.linalg.norm(residual)
+        
+        
+        ## we will make e the tolerance a very small number
+        
+        if(norm_residual >= tol):
+            rank = rank+1
+            R[rank-1,j] =norm_residual
+            Q[:,rank-1:rank] = (residual/norm_residual)
 
-                for k in range(j+1,n):
-                    R[rank-1,k] = (np.transpose(Q[:,rank-1:rank]))*A[:,k:k+1]
+            for k in range(j+1,n):
+                R[rank-1,k] = np.matmul((np.transpose(Q[:,rank-1:rank])),A[:,k:k+1])
     return Q,R,rank
 
 
@@ -117,13 +118,13 @@ def QRImprovedDecomposition(A):
 ##@param : nxn matric L, rank n, and vector b of nx1
 ##@return : nx1 vector z that solves Lz =b
 def forward(L,n,b):
-    z =np.zeros(n,1)
+    z =np.zeros((n,1))
     z[0:0,0:0] = b[0:0]/L[1:1,1:1]
     for i in range(1,n):
         sum =0
         for j in range(0,i-1):
             sum =sum+(L[i:i,j:j]*z[j:j])
-        z[i:i] =(b[i:i]-sum)/L[i:i,i:i]
+        z[i:i+1] =(b[i:i+1]-sum)/(L[i:i+1,i:i+1])
 
 
 
@@ -136,9 +137,10 @@ def LSQR(A,b):
     (Q,R,rank) =QRImprovedDecomposition(A)
     Q= Q[:,0:rank-1]
     R =R[0:rank-1,:]
-    b= np.matmul((np.transpose(Q)),b)
+    QTrans =np.transpose(Q)
+    b= np.matmul(QTrans,b)
     (Q1,R1,rank1) =QRImprovedDecomposition(np.transpose(R))
-    z =forward(np.transpose(R1),b)
+    z =forward(np.transpose(R1),rank,b)
     x =np.matmul(Q1,z)
 
 
@@ -151,13 +153,34 @@ def main():
     ##print("This is the Q for our A QR decomposition:\n",Q)
     ##print("This is the R for our A QR decomposition:\n",R)
     ##x =Backward(test,column)
-    problemOneA= np.array([[4,0,0,0],[-4,8,-4,2],[-7,7,-3,3],[-2,2,-2,4]])
-    problemOneX = np.array([[1],[2],[3],[4]])
-    pONeATranspose =np.matmul(np.transpose(problemOneA),problemOneA)
-    pONeXTranspose =np.matmul(np.transpose(problemOneA),problemOneX)
-    solution=LeastSquareSolution(pONeATranspose,pONeXTranspose)
-    print("This is the solution for the least squares:\n",solution)
+    ##problemOneA= np.array([[4,0,0,0],[-4,8,-4,2],[-7,7,-3,3],[-2,2,-2,4]])
+    ##problemOneX = np.array([[1],[2],[3],[4]])
+    ##pONeATranspose =np.matmul(np.transpose(problemOneA),problemOneA)
+    ##pONeXTranspose =np.matmul(np.transpose(problemOneA),problemOneX)
+    ##solution=LeastSquareSolution(pONeATranspose,pONeXTranspose)
+    ##print("This is the solution for the least squares:\n",solution)
     
+
+    test =np.array([[4,0,0,0],[-4,8,-4,2],[-7,7,-3,3],[-2,2,-2,4]])
+    print("This is my input matrix to the QRImproved:\n",test)
+    column =np.array([[1],[2],[3],[4]])
+    # (Q,R,rank)=QRImprovedDecomposition(test)
+    # print("This is the Q for our Test QR decomposition Improved:\n",Q)
+    # print("This is the R for our Test QR decomposition Improved:\n",R)
+    # print("This is the rank for Test: \n",rank)
+    # print("This is the Test Matrix:\n",np.matmul(Q,R))
+    # print("This is the identiy matrix of Q and R\n",np.matmul(np.transpose(Q),Q))
+
+
+    x = LSQR(test,column)
+    print("This is a test of my solution x:\n")
+
+
+
+
+
+
+
     
     ##testTranspose=np.matmul(np.transpose(test),test)
     ##columnTranspose=np.matmul(np.transpose(test),column)
