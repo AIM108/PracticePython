@@ -114,7 +114,9 @@ def gJTest():
 
 
 def main():
-    gJTest()
+    ##gJTest()
+    print (5-(-2))
+
 
 if __name__ =="__main__":
     main()

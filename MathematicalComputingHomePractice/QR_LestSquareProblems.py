@@ -47,36 +47,99 @@ def LeastSquareSolution(A,C):
     return x
 
 
+
+
+
+##Advance problem sudo code
 ##This is Algorithm 4, the QR decomposition when columns of A are not linealy independent, not tested 
-def QRNotLinearIndependent(A):
+# def QRNotLinearIndependent(A):
+#     (m,n) =np.shape(A)
+
+#     ##Initialize Q and R
+#     R= np.zeros((n,n))
+#     Q =np.zeros((m,n))
+#     rank = 0
+#     residual =A[:,0,:1]
+#     ##norm_residual = np.linalg.norm(residual)
+
+#     ##row =0
+
+#     for j in range(0,n):
+#         if norm_residual <0:  ##This must be changed to a better tolerance, when that is figured out
+#             R[row:m,j] = np.zeros((m-row,1)) ## Typo in the sudo code
+#         else:
+#             R[row,j] =norm_residual
+#             Q[:,row] = (residual/norm_residual)
+#             rank =rank+1
+#             for k in range(j+1,n+1):
+#                 R[row,k] =Q[:,row]*A[:,k]
+#             if j < n-1:
+#                 vector_proj =np.zeros((m,1))
+#                 for i in range(1,row+1):
+#                     vector_proj = vector_proj+ (R[i,row+1]*Q[:,i])
+#                     residual = A[:,j+1]-vector_proj ## This is a colum vector
+#             row =row+1
+#         norm_residual =np.linalg.norm(residual)
+
+
+##@param :Will take in a mxn matrix A, not nessasary linearly independent and a tolerance o e which will be a small number
+##@return :mxp matrix Q, pxn matrix R, and the rank p of the matrix
+def QRImprovedDecomposition(A):
     (m,n) =np.shape(A)
 
-    ##Initialize Q and R
+    ##Initialize Q and R and the Rank
     R= np.zeros((n,n))
     Q =np.zeros((m,n))
-    residual =A[:,0,:1]
-    norm_residual = np.linalg.norm(residual)
-
-    row =0
-    rank =0
+    rank = 0
 
     for j in range(0,n):
-        if norm_residual <0:  ##This must be changed to a better tolerance, when that is figured out
-            R[row:m,j] = np.zeros((m-row,1)) ## Typo in the sudo code
-        else:
-            R[row,j] =norm_residual
-            Q[:,row] = (residual/norm_residual)
-            rank =rank+1
-            for k in range(j+1,n+1):
-                R[row,k] =Q[:,row]*A[:,k]
-            if j < n-1:
-                vector_proj =np.zeros((m,1))
-                for i in range(1,row+1):
-                    vector_proj = vector_proj+ (R[i,row+1]*Q[:,i])
-                    residual = A[:,j+1]-vector_proj ## This is a colum vector
-            row =row+1
-        norm_residual =np.linalg.norm(residual)
+        vector_proj = np.zeros((m,1))
+        for i in range(0,rank):
+            ##Vector projection plus the row i in q and r at i,j
+            vector_proj =vector_proj+R[i,j]*Q[:,i:i+1]
+            ##The diffrence in our actual A row j and its projection
+            residual =A[:,j:j+1] - vector_proj
+            norm_residual = np.linalg.norm(residual)
+            
+            
+            ## we will make e the tolerance a very small number
+            e=0.0005
+            if(norm_residual > e):
+                R[rank-1,j] =norm_residual
+                Q[:,rank-1:rank] = (residual/norm_residual)
 
+                for k in range(j+1,n):
+                    R[rank-1,k] = (np.transpose(Q[:,rank-1:rank]))*A[:,k:k+1]
+    return Q,R,rank
+
+
+##Forward substitution algorithm
+##@param : nxn matric L, rank n, and vector b of nx1
+##@return : nx1 vector z that solves Lz =b
+def forward(L,n,b):
+    z =np.zeros(n,1)
+    z[0:0,0:0] = b[0:0]/L[1:1,1:1]
+    for i in range(1,n):
+        sum =0
+        for j in range(0,i-1):
+            sum =sum+(L[i:i,j:j]*z[j:j])
+        z[i:i] =(b[i:i]-sum)/L[i:i,i:i]
+
+
+
+
+
+##Will compute the solution to the least squares proble min ||AxLS-b||
+##@param :Takes in matrix mxn A, and vector b of mx1
+##@return :x matrix to the LS of QR
+def LSQR(A,b):
+    (Q,R,rank) =QRImprovedDecomposition(A)
+    Q= Q[:,0:rank-1]
+    R =R[0:rank-1,:]
+    b= np.matmul((np.transpose(Q)),b)
+    (Q1,R1,rank1) =QRImprovedDecomposition(np.transpose(R))
+    z =forward(np.transpose(R1),b)
+    x =np.matmul(Q1,z)
 
 
 
