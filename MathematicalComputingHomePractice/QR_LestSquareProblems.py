@@ -122,11 +122,10 @@ def forward(L,n,b):
     z[0:0+1] = b[0:0+1]/L[0:0+1,0:0+1]
     for i in range(1,n):
         sum =0
-        for j in range(0,i):
+        for j in range(0,i-1):
             print("This is the sum during ",j, "sum= ",sum)
             sum =sum+(L[i:i+1,j:j+1]*z[j:j+1])
-            np.shape()
-        z[i:i+1] =(b[i:i+1]-sum)/(L[i:i+1,i:i+1]) #Their is a problem herer in its shape (0,0) (1,1) brodecast
+        z[i] =(b[i]-sum)/(L[i,i]) #Their is a problem herer in its shape (0,0) (1,1) brodecast
     return z
 
 
