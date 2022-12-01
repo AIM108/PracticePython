@@ -114,17 +114,20 @@ def QRImprovedDecomposition(A):
     return Q,R,rank
 
 
-##Forward substitution algorithm
+##Forward substitution algorithm, Tested Workes gets me the correct data for test set
 ##@param : nxn matric L, rank n, and vector b of nx1
 ##@return : nx1 vector z that solves Lz =b
 def forward(L,n,b):
     z =np.zeros((n,1))
-    z[0:0,0:0] = b[0:0]/L[1:1,1:1]
+    z[0:0+1] = b[0:0+1]/L[0:0+1,0:0+1]
     for i in range(1,n):
         sum =0
-        for j in range(0,i-1):
-            sum =sum+(L[i:i,j:j]*z[j:j])
-        z[i:i+1] =(b[i:i+1]-sum)/(L[i:i+1,i:i+1])
+        for j in range(0,i):
+            print("This is the sum during ",j, "sum= ",sum)
+            sum =sum+(L[i:i+1,j:j+1]*z[j:j+1])
+            np.shape()
+        z[i:i+1] =(b[i:i+1]-sum)/(L[i:i+1,i:i+1]) #Their is a problem herer in its shape (0,0) (1,1) brodecast
+    return z
 
 
 
@@ -161,21 +164,27 @@ def main():
     ##print("This is the solution for the least squares:\n",solution)
     
 
-    test =np.array([[4,0,0,0],[-4,8,-4,2],[-7,7,-3,3],[-2,2,-2,4]])
-    print("This is my input matrix to the QRImproved:\n",test)
-    column =np.array([[1],[2],[3],[4]])
-    # (Q,R,rank)=QRImprovedDecomposition(test)
+    #Not Done Yet test
+    test =np.array([[1.,5,9],[2.,6,10],[3.,7,11],[4.,8,12]])
+    print("This is my input matrix to the LSQR:\n",test)
+    column =np.array([[1.],[2],[3],[4]])
+    print("This is my input colum for LSQR:\n",column)
+    x = LSQR(test,column)
+    print("This is a test of my solution x:\n")
+
+
+    # (Q,R,rank)=QRImprovedDecomposition(test) Tested complete
     # print("This is the Q for our Test QR decomposition Improved:\n",Q)
     # print("This is the R for our Test QR decomposition Improved:\n",R)
     # print("This is the rank for Test: \n",rank)
     # print("This is the Test Matrix:\n",np.matmul(Q,R))
     # print("This is the identiy matrix of Q and R\n",np.matmul(np.transpose(Q),Q))
-
-
-    x = LSQR(test,column)
-    print("This is a test of my solution x:\n")
-
-
+    
+    # L= np.array([[2.,0,0],[1,3,0],[2,3,4]])
+    # rank =3
+    # b = np.array([[4.],[8],[18]])
+    # z =forward(L,rank,b)
+    # print("This is my z for test:\n",z)
 
 
 
