@@ -1,5 +1,12 @@
+#@author :Alonso Montelongo
+#@version : 1.0
+#MATH-4340-001
+
+
+
 import numpy as np
 import copy as c
+import pickle
 
 
 
@@ -75,8 +82,8 @@ def LSQR(A,b):
 
     return x
 
-
-def main():
+#Will test our LSQR and give us an output
+def TestForLSQRPorblems():
     #ExercisesTwo
     test =np.array([[1.,5,9],[2.,6,10],[3.,7,11],[4.,8,12]])
     print("This is my input matrix to the LSQR:\n",test)
@@ -102,7 +109,72 @@ def main():
     columnThree =np.array([[1],[2],[3],[4]])
     print("This is my input colum for LSQR:\n",columnThree)
     z = LSQR(TestThree,columnThree)
-    print("This is a test of my solution y:\n",z)
+    print("This is a test of my solution z:\n",z)
+
+
+
+
+
+
+#Advance Proble
+#Object oriented programming with classes in python
+##Will print primeslist and indicate if its a double prime or not
+
+
+
+#@class :primes, will be an object that contains a number, and a boolean to indicate whether it is a twin prime
+class primes(object):
+    def __init__(self,m,var):
+        self.number = m
+        self.twin = var
+
+    def display(self,i):
+        if self.twin == True:
+            print("The twin prime", self.number, " is at index", i+1)
+        else:
+            print("The prime number ", self.number," is at index", i+1)
+    def setTwin(self,var):
+        self.twin =var
+
+#@name :prime_generator
+# @param :n, the range of prime numbers generated from 2 to n
+# @return :primeslist, the list of prime numbers and length_primes, the length of the list    
+def prime_generator(N):
+    #find all prime numbers and double primes less than N
+    primeslist =[]
+    length_primes =2
+    primeslist.append(primes(2,True))
+    primeslist.append(primes(3,True))
+
+    #This code bellow will generate the prime numbers and twin primes 
+    
+    for x in range(4,N):
+
+        for i in range(length_primes):
+            
+            if( x%((primeslist[i]).number) ==0):
+                break
+            elif (i == (length_primes-1)):
+                if((x-2)==(primeslist[length_primes-1].number)):
+                    primeslist[length_primes-1].setTwin(True)
+                    primeslist.append(primes(x,True))
+                    length_primes =length_primes+1
+                else:
+                    primeslist.append(primes(x,False))
+                    length_primes =length_primes+1
+    return primeslist, length_primes
+
+#Will test our primes_generator and give us an output
+def test():
+    primeslist, length_primes = prime_generator(50)
+    for i in range(0,length_primes):
+        primeslist[i].display(i)
+
+
+
+def main():
+    TestForLSQRPorblems()
+    test()
 
 if __name__ == "__main__":
     main()
